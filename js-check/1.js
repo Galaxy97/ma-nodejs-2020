@@ -1,4 +1,4 @@
-var my_number = -1;
+const my_number = -1;
 let myNumber = 0;
 let number = 3;
 
