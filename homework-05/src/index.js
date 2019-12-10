@@ -31,7 +31,7 @@ async function getObjectFromFile(filePath) {
     return JSON.parse(dataInFile);
   } catch (error) {
     console.error(error);
-    return null;
+    return new Error('Problem with file');
   }
 }
 
@@ -54,11 +54,17 @@ async function buildOutputObject(files) {
   const outputObject = {};
   // eslint-disable-next-line no-restricted-syntax
   for (const file of files) {
-    // eslint-disable-next-line no-await-in-loop
-    const objectsInFile = await getObjectFromFile(file);
-    objectsInFile.url = rebuildUrl(objectsInFile.url);
-    const fileName = path.parse(objectsInFile.file).name;
-    outputObject[fileName] = objectsInFile;
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      const objectsInFile = await getObjectFromFile(file);
+      objectsInFile.url = rebuildUrl(objectsInFile.url);
+      const fileName = path.parse(objectsInFile.file).name;
+      outputObject[fileName] = objectsInFile;
+    } catch (e) {
+      console.error(e);
+      // eslint-disable-next-line no-continue
+      continue;
+    }
   }
   return outputObject;
 }
