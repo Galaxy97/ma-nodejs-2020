@@ -1,19 +1,20 @@
 const os = require('os');
 
-let RATE = process.env.RATE ? process.env.RATE : 1000;
-let LIMIT = process.env.LIMIT ? process.env.LIMIT : 300;
-let COLOR = process.env.COLOR ? process.env.COLOR : true;
+let RATE = process.env.RATE || 1000;
+let LIMIT = process.env.LIMIT || 300;
+let COLOR = process.env.COLOR || true;
 
 process.argv.forEach(element => {
   if (/--rate=\d*/.test(element)) {
-    RATE = element.slice(7);
+    RATE = Number(element.match(/\d+/g));
   }
   if (/--limit=\d*/.test(element)) {
-    LIMIT = element.slice(8);
+    LIMIT = Number(element.match(/\d+/g));
   }
   if (/--color=true|false/.test(element)) {
+    const match = element.match(/true|false/g);
     // eslint-disable-next-line no-unneeded-ternary
-    COLOR = element.slice(8) === 'true' ? true : false;
+    COLOR = match[0] === 'true' ? true : false;
   }
 });
 
