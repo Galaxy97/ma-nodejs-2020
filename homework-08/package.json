@@ -1,0 +1,30 @@
+{
+  "name": "ma-node",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js run"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^6.6.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.5.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.0.9",
+    "prettier": "^1.18.2"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "commander": "^4.1.0",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.8"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "echo Check your code && eslint src/index.js "
+    }
+  }
+}
