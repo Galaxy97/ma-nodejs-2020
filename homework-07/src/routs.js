@@ -24,6 +24,10 @@ const handle = (req, res) => {
           const result = services.handleMetrics(requestUrl.query);
           responseFunc(res, result.code, result.body);
           break;
+        case '/random':
+          const randomres = services.randomHandler();
+          responseFunc(res, randomres.code, randomres.body);
+          break;
         default:
           responseFunc(res, 404, {
             message: 'rout no found',
