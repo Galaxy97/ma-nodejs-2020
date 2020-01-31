@@ -2,15 +2,12 @@ const os = require('os');
 
 let limit = 2000;
 
-const getMetricsData = parametr => {
+const getMetricsData = () => {
   const data = {
     total: Math.round((os.totalmem() / 1024 / 1024) * 1000) / 1000,
     free: Math.round((os.freemem() / 1024 / 1024) * 1000) / 1000,
   };
   data.allocated = Math.round((data.total - data.free) * 1000) / 1000;
-  if (parametr) {
-    return data[parametr];
-  }
   return data;
 };
 
@@ -81,7 +78,20 @@ const handleMetrics = query => {
       result.messeage = 'Available memory is under the defined limit';
     }
     if (query.filter) {
-      result[query.filter] = metrics[query.filter];
+      if (
+        query.filter === 'allocated' ||
+        query.filter === 'total' ||
+        query.filter === 'free'
+      ) {
+        result[query.filter] = metrics[query.filter];
+      } else {
+        return {
+          code: 400,
+          body: {
+            messeage: 'Filter value is not valid',
+          },
+        };
+      }
     } else {
       Object.keys(metrics).forEach(key => {
         result[key] = metrics[key];
@@ -99,4 +109,28 @@ const handleMetrics = query => {
   }
 };
 
-module.exports = {getMetricsData, handleLimit, handleMetrics, limit};
+const randomHandler = () => {
+  const random = Math.floor(Math.random() * Math.floor(100));
+  if (random > 40) {
+    return {
+      code: 200,
+      body: {
+        messeage: `Your lucky is ${random} persent`,
+      },
+    };
+  }
+  return {
+    code: 400,
+    body: {
+      messeage: `You are Unlucky :( ${random} persent`,
+    },
+  };
+};
+
+module.exports = {
+  getMetricsData,
+  handleLimit,
+  handleMetrics,
+  randomHandler,
+  limit,
+};

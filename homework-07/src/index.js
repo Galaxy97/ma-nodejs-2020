@@ -1,8 +1,10 @@
 const http = require('http');
 const routs = require('./routs');
 
-const hostname = '127.0.0.1';
-const port = 3000;
+const config = require('./config');
+
+const hostname = config.host;
+const {port} = config;
 
 const server = http.createServer((req, res) => {
   routs.handle(req, res);
