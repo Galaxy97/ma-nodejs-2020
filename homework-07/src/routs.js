@@ -2,7 +2,9 @@
 const url = require('url');
 const services = require('./services');
 
-const base64 = 'Basic QW5kcmlpOjEyMzMyMQ==';
+const config = require('./config');
+
+// const base64 = ;
 
 const responseFunc = (res, code, body) => {
   res.writeHead(code, {'Content-Type': 'application/json'});
@@ -11,7 +13,7 @@ const responseFunc = (res, code, body) => {
 
 const handle = (req, res) => {
   // authorization
-  if (req.headers.authorization !== base64) {
+  if (req.headers.authorization !== config.base64) {
     responseFunc(res, 401, {
       message: 'Unauthorized',
     });
