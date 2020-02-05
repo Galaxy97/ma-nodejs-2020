@@ -1,40 +1,34 @@
+const {pipeline, Transform} = require('stream');
 const fs = require('fs');
 const config = require('../config');
 
-function sendJPEG(res) {
-  const stream = fs.createReadStream(config.filePath);
-  let used = 0;
-  let usedForOutput = 0;
-  const interval = setInterval(() => {
-    if (stream.isPaused()) stream.resume();
-    used = 0;
-  }, 1000);
-  process.stdout.write('Start');
-  stream
-    .on('data', chunk => {
-      res.write(chunk);
-      if (used + chunk.length > config.limit) {
-        stream.pause();
-      } else {
-        used += chunk.length;
-        usedForOutput += chunk.length;
-        if (usedForOutput >= 1048576) {
-          process.stdout.write('.');
-          usedForOutput = 0;
-        }
-      }
-    })
-    .on('close', () => {
-      process.stdout.write('END \n');
-      clearInterval(interval);
-      res.end();
-    })
-    .on('error', error => {
-      console.error('Failed to send image buffer!', error.stack);
-      res.emit('error', new Error('Failed to send image!'));
-    });
+class Limited extends Transform {
+  // eslint-disable-next-line no-useless-constructor
+  constructor() {
+    super();
+    this.metrics = 0;
+  }
+
+  // eslint-disable-next-line no-underscore-dangle
+  _transform(chunk, encrypt, callback) {
+    const delay = chunk.length / config.limit;
+    this.metrics += chunk.length;
+    if (this.metrics >= 1048576) {
+      process.stdout.write('.');
+      this.metrics = 0;
+    }
+    setTimeout(() => {
+      this.push(chunk);
+      callback();
+    }, delay * 1000);
+  }
 }
 
-module.exports = {
-  sendJPEG,
+const readFile = fs.createReadStream(config.filePath);
+const speedLimit = new Limited();
+module.exports.sendJPEG = res => {
+  pipeline(readFile, speedLimit, res, err => {
+    if (err) console.error(err);
+    console.log('succesful');
+  });
 };
