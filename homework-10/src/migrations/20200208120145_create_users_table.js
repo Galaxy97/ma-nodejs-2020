@@ -5,6 +5,7 @@ exports.up = async knex => {
     table.string('login');
     table.string('password');
     table.uuid('token').defaultTo(knex.raw('uuid_generate_v4()'));
+    table.unique(['login', 'password']);
   });
 };
 
